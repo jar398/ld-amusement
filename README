@@ -1,0 +1,22 @@
+The Fuseki documentation is awful.  But there are some independent
+how-to type articles.
+
+Rricha Jalota:
+
+  - download Jena [3.10] and Fuseki
+  - tar xzf apache-jena-3.10.0.tar.gz
+  - tar xzf apache-jena-fuseki-3.10.0.tar.gz 
+  - put all the lib/ jars on classpath
+  - export JENA_HOME=~/Downloads/apache-jena-3.10.0
+  - export FUSEKI_HOME=~/Downloads/apache-jena-fuseki-3.10.0
+  - scripts are in bin/  e.g. $JENA_HOME/bin/sparql --version
+  - ~/a/eol/fuseki
+
+$FUSEKI_HOME/fuseki-server --file=example.ttl /ds
+
+Fuseki seems to generate JSON sparql query result format by default.
+
+Fuseki can generate JSON-LD for sparql CONSTRUCT commands.
+
+Now working in ~/g/ld-amusement ... need to create a config file
+
