@@ -12,8 +12,8 @@
 
 ## Realization
 
-I picked Jena Fuseki for this experiment.  It turns out to be pretty
-easy install.  The primary documentation is awful, but there are some
+I picked Jena Fuseki for this experiment.  It's pretty
+easy to install.  The primary documentation is awful, but there are some
 third-party 'howto' posts that are very helpful.
 
 I wrote a kind of stupid python3 program to convert the traitbank .zip
@@ -21,9 +21,12 @@ file to turtle.  Actually I only worked with a small subset (family
 Felidae, EOL page id 7674), which as of November 2018 was 144 taxa,
 8769 trait records, 28628 metadata records, and 8017 terms.
 
+This code is just a proof of concept; it is not meant for production
+use.  It represents only about two days of work.
+
 ## HOWTO
 
-  - make sure Java is installed (I use Java 8)
+  - make sure Java is installed (I used Java 8)
   - clone this repository and enter its top level directory
   - download Jena (I used version 3.10) and Fuseki
       (see https://jena.apache.org/download/ )
@@ -38,12 +41,15 @@ else depending on how you did the downloads)
 
 Scripts are in `$JENA_HOME/bin/`.  Smoke test: `$JENA_HOME/bin/sparql --version`
 
-The repository contains a sample .zip file.  If you want to make
-others, you'll need the `traits_dumper.rb` script from the
-`eol_website` repository, and an API token.  There is a suitable rule
-in the Makefile for obtaining a .zip , but it requires that the
-exported shell variable point to a directory containing (a) the API
-token in `api.token` and (b) a clone of the eol_website repository.
+The repository contains a small sample .zip file.  If you want to make
+others, you'll need to fetch trait records from EOL using the
+`traits_dumper.rb` script from the `eol_website` repository; you'll
+also need a "power user" API token (see 
+[the API documentation](https://github.com/EOL/eol_website/blob/master/doc/api.md)).
+There is a suitable rule in the Makefile for obtaining a .zip , but it
+requires that the exported shell variable point to a directory
+containing (a) the API token in `api.token` and (b) a clone of the
+eol_website repository.
 
 Convert traitbank csv to turtle: (this just picks up the Felidae zip file from the repository, but it is easy to drive it from a more significant traitbank zip file, perhaps even the whole thing)
 
@@ -71,32 +77,38 @@ same computer as the Fuseki server, visit:
 
     http://localhost:3030/
 
-Fuseki generates JSON sparql query result format by default
-(selectable via the UI, or in a way prescribed by the [SPARQL protocol](https://www.w3.org/TR/sparql11-overview/)).
+Fuseki generates JSON sparql query result format by default.  The
+format choice is selectable via the UI, or in a way prescribed by the
+[SPARQL protocol](https://www.w3.org/TR/sparql11-overview/)).
 
-Fuseki generates JSON-LD for sparql CONSTRUCT commands although turtle is the default.
+Fuseki can generate JSON-LD for SPARQL `CONSTRUCT` commands although
+turtle is the default.  This would be useful for providing specialized
+linked data services (e.g. for reviving the v2 API, should we so
+choose).
 
-Software-friendly SPARQL endpoint is available (instructions TBD).
+A proper SPARQL endpoint is available (instructions TBD).
 
 ## Security
 
 Fuseki has no security infrastructure (other than what one finds in
-`shiro.ini` which I don't really understand).  Visitors to the Fuseki
-port can perform updates, deletions, and so on.  To make an open
-endpoint, one might use apache ProxyPass or some similar feature that
-allows fine-grained access control.  Nginx certainly has something
+`shiro.ini` which I don't understand).  Visitors to the Fuseki port
+can perform updates, deletions, and so on.  To make an open endpoint,
+one might use apache ProxyPass or some similar feature that allows
+fine-grained access control.  Nginx certainly has something
 equivalent.  Alternatively, one could deploy the .war file in tomcat,
 and I'm sure other arrangements are possible as well.
 
 ## Resource use
 
-    * The Felidae .zip file: about .6M
-    * The Turtle files for that .zip (total): 11M
-    * Space on disk required for the persistent store: 18M
+  * The Felidae .zip file is about .6M
+  * The Turtle files for that .zip file come to about 11M
+  * Space on disk used by the persistent store is 18M
 
 The .zip file for _all_ of traitbank is 461M, which by linear
-extrapolation would require 14G on disk for persistent triple storage
-(not that much I guess), and who knows how much RAM.
+extrapolation would turn into 14G on disk for persistent triple
+storage (not that much I guess).  I don't know what this means in
+terms of RAM.  I have no idea what query performance would be at
+scale, but it is claimed that Jena does pretty well.
 
 ## What the turtle looks like
 
