@@ -1,11 +1,13 @@
+# Rules for various operations related to Fuseki SPARQL service for traitbank
 
 # Need to define APACHE_JENA_BIN etc
 #
 # export JENA_HOME=~/Downloads/apache-jena-3.10.0
 # export FUSEKI_HOME=~/Downloads/apache-jena-fuseki-3.10.0
-# APACHE_JENA_BIN=$JENA_HOME/bin
-# JENA_FUSEKI_JAR=$FUSEKI_HOME/fuseki-server.jar
+# export EOL=/dsk/jar/a/eol
 
+TAXON=felidae
+TAXON_PAGE=7674
 
 all: load
 
@@ -15,15 +17,16 @@ serve: data/dataForTDB/nodes.dat
 
 load: data/dataForTDB/nodes.dat
 
-data/dataForTDB/nodes.dat: felidae-ttl/terms.ttl
+data/dataForTDB/nodes.dat: $(TAXON)-ttl/terms.ttl
+	rm -rf data/dataForTDB/*
 	mkdir -p data/dataForTDB
-	time $$APACHE_JENA_BIN/tdbloader2 --loc=data/dataForTDB felidae-ttl/*.ttl
+	time $$JENA_HOME/bin/tdbloader2 --loc=data/dataForTDB $(TAXON)-ttl/*.ttl
 
-convert: felidae-ttl/terms.ttl
+convert: $(TAXON)-ttl/terms.ttl
 
-felidae-ttl/terms.ttl: felidae.zip convert_to_ttl.py
-	python3 convert_to_ttl.py felidae.zip felidae-ttl
+$(TAXON)-ttl/terms.ttl: $(TAXON).zip convert_to_ttl.py
+	python3 convert_to_ttl.py $(TAXON).zip $(TAXON)-ttl
 
-felidae.zip:
-	ID=7674 CHUNK=20000 TOKEN=`cat $$EOL/api.token` ZIP=felidae.zip \
-        time ruby -r $$EOL/eol_website/lib/traits_dumper.rb -e TraitsDumper.main
+$(TAXON).zip:
+	ID=$(TAXON_PAGE) CHUNK=10000 TOKEN=`cat $$EOL/api.token` ZIP=$(TAXON).zip \
+          time ruby -r $$EOL/eol_website/lib/traits_dumper.rb -e TraitsDumper.main
