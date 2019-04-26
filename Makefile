@@ -16,6 +16,7 @@ serve: data/dataForTDB/nodes.dat
 load: data/dataForTDB/nodes.dat
 
 data/dataForTDB/nodes.dat: felidae-ttl/terms.ttl
+	mkdir -p data/dataForTDB
 	time $$APACHE_JENA_BIN/tdbloader2 --loc=data/dataForTDB felidae-ttl/*.ttl
 
 convert: felidae-ttl/terms.ttl
@@ -23,3 +24,6 @@ convert: felidae-ttl/terms.ttl
 felidae-ttl/terms.ttl: felidae.zip convert_to_ttl.py
 	python3 convert_to_ttl.py felidae.zip felidae-ttl
 
+felidae.zip:
+	ID=7674 CHUNK=20000 TOKEN=`cat $$EOL/api.token` ZIP=felidae.zip \
+        time ruby -r $$EOL/eol_website/lib/traits_dumper.rb -e TraitsDumper.main

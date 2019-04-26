@@ -72,7 +72,7 @@ def convert_to_ttl(path, outdir):
                 r = csv.reader(infile)
                 header = r.__next__()
                 print("%s: %s" % (clas, header[1:]))
-                outfile.write('@prefix e: <http://eol.org/schema/>\n')
+                outfile.write('@prefix e: <http://ld.eol.org/schema/>\n')
                 column_names = header
                 for row in r:
                     rows += 1
